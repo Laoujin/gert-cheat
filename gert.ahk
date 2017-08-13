@@ -1,19 +1,35 @@
 #Persistent
 
-keyToPress := 5
-keyToPress2 := 4
-everyMinutes := 30 * 1000 * 60
+; The next key is pressed after
+waitTimeInMinutes := 30 * 1000 * 60
+actions := Object()
+actions.Insert(1)
+actions.Insert(2)
+actions.Insert(3)
 
-SetTimer, DoStuff, %everyMinutes%
+SetTimer, DoStuff, %waitTimeInMinutes%
 
 active := true
+actionIndex := 0
+actionCount := actions.MaxIndex()
 
 DoStuff:
 if active {
-	; MsgBox yaye
-	SendInput %keyToPress%
-	Sleep, 1000
-	SendInput %keyToPress2%
+	if (actionIndex > 0) {
+		; Wait a few minutes extra
+		Random, extraRandomMinutes, 1, 10
+		Random, extraRandomSeconds, 1, 60
+		extraRnd := (extraRandomMinutes * 1000 * 60) + (extraRandomSeconds * 1000)
+		Sleep extraRnd
+
+		; Press the key
+		keyToPress := actions[actionIndex]
+		SendInput %keyToPress%
+	}
+	actionIndex := actionIndex + 1
+	if (actionIndex > actionCount) {
+		actionIndex := 1
+	}
 }
 return
 
